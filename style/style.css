@@ -7,6 +7,8 @@ h1{
 
 .formulario-entrada{
     border: 2px solid #b9c4c5;
+    height: 100%;
+    width: 100%;
 }
 
 .formulario-entrada input{
@@ -37,4 +39,8 @@ h1{
     border-style: none;
     cursor: pointer;
     text-shadow: 0.5px 0.5px 2px #000000;
+}
+
+.contatos{
+    background: #000000;
 }
