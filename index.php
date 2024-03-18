@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
 
 
+
 </head>
 
 <body>
@@ -109,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
 
         </header>
     </section>
-    <section class="section">
+    <section class="section" id="listaContatos">
         <h1>Contatos</h1>
         <div>
             <table>
@@ -159,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
                         </td>
                         <td>
                             <button><a href="index.php?id=<?php echo $contato['id']?>">Editar</a></button>
-                            <button><a href="deletar.php?id=<?php echo $contato['id']?>">Excluir</a></button>
+                            <button onclick="retornarAoLocal()" ><a href="deletar.php?id=<?php echo $contato['id']?>" onclick="return confirm('Tem certeza que deseja excluir o registro? ');" >Excluir</a></button>
                         </td>
                     </tr>
 
