@@ -1,21 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+  }
+
 h1{
     font-size: 3em;
     font-family: "Roboto Slab", serif;
     color: #046873;
     text-align: center;
+    margin: 2% 0;
+}
+
+.section{
+    height: 100vh;
 }
 
 .formulario-entrada{
     border: 2px solid #b9c4c5;
     height: 100%;
     width: 100%;
+    
 }
 
 .formulario-entrada input{
     display: block;
     margin:  0 auto 2% auto;
     padding: 0.5% 2%;
-    width: 30%;
+    width: 34%;
 }
 
 .formulario-entrada label{
