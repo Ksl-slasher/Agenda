@@ -11,6 +11,7 @@ class Agenda
     {
         $this->mysql = $mysql;
     }
+
     // Create
     public function adicionarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone): void
     {
@@ -20,5 +21,14 @@ class Agenda
 
     }
 
+    // Read
+    public function exibirTodos(): array
+    {
+        $resultado = $this->mysql->query('SELECT * FROM `contatos`;');
+        $contatos = $resultado->fetch_all(MYSQLI_ASSOC);
+
+        return $contatos;
+
+    }
     
 }

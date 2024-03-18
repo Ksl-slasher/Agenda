@@ -4,6 +4,9 @@ require 'config.php';
 require 'src/Agenda.php';
 require 'src/redireciona.php';
 
+$listaContatos = new Agenda($mysql);
+$contatos = $listaContatos->exibirTodos();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $contato = new Agenda($mysql);
@@ -63,7 +66,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </header>
     </section>
     <section class="section">
+        <h1>Contatos</h1>
+        <div>
+            <table>
+                <tr>
+                    <th><h2>Id</h2></th>
+                    <th><h2>Nome</h2></th>
+                    <th><h2>Endereço</h2></th>
+                    <th><h2>Cidade</h2></th>
+                    <th><h2>Estado</h2></th>
+                    <th><h2>Email</h2></th>
+                    <th><h2>Telefone</h2></th>
+                    
+                </tr>
+                <?php foreach ($contatos as $contato) :?>
+                <tr>
+                    <td><?php echo $contato['id'] ?></td>
+                    <td><?php echo $contato['nome'] ?></td>
+                    <td><?php echo $contato['endereco'] ?></td>
+                    <td><?php echo $contato['cidade'] ?></td>
+                    <td><?php echo $contato['estado'] ?></td>
+                    <td><?php echo $contato['email'] ?></td>
+                    <td><?php echo $contato['telefone'] ?></td>
+                </tr>
 
+                <?php endforeach ?>
+
+
+            </table>
+
+        </div>
     </section>
 
 </body>
