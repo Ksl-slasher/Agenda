@@ -3,11 +3,12 @@
 require 'config.php';
 require 'src/Agenda.php';
 require 'src/redireciona.php';
+$edicao = false;
 
 $listaContatos = new Agenda($mysql);
 $contatos = $listaContatos->exibirTodos();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $edicao === false ) {
 
     $contato = new Agenda($mysql);
     $contato->adicionarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone']);
@@ -36,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <section class="section" >
+    <section class="section">
         <header class="formulario-entrada">
             <h1>Agenda</h1>
             <form action="index.php" method="POST">
@@ -70,25 +71,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <table>
                 <tr>
-                    <th><h2>Id</h2></th>
-                    <th><h2>Nome</h2></th>
-                    <th><h2>Endereço</h2></th>
-                    <th><h2>Cidade</h2></th>
-                    <th><h2>Estado</h2></th>
-                    <th><h2>Email</h2></th>
-                    <th><h2>Telefone</h2></th>
-                    
+                    <th>
+                        <h2>Nome</h2>
+                    </th>
+                    <th>
+                        <h2>Endereço</h2>
+                    </th>
+                    <th>
+                        <h2>Cidade</h2>
+                    </th>
+                    <th>
+                        <h2>Estado</h2>
+                    </th>
+                    <th>
+                        <h2>Email</h2>
+                    </th>
+                    <th>
+                        <h2>Telefone</h2>
+                    </th>
+                    <th>
+                        <h2>Ações</h2>
+                    </th>
+
                 </tr>
-                <?php foreach ($contatos as $contato) :?>
-                <tr>
-                    <td><?php echo $contato['id'] ?></td>
-                    <td><?php echo $contato['nome'] ?></td>
-                    <td><?php echo $contato['endereco'] ?></td>
-                    <td><?php echo $contato['cidade'] ?></td>
-                    <td><?php echo $contato['estado'] ?></td>
-                    <td><?php echo $contato['email'] ?></td>
-                    <td><?php echo $contato['telefone'] ?></td>
-                </tr>
+                <?php foreach ($contatos as $contato): ?>
+                    <tr>
+                        <td>
+                            <?php echo $contato['nome'] ?>
+                        </td>
+                        <td>
+                            <?php echo $contato['endereco'] ?>
+                        </td>
+                        <td>
+                            <?php echo $contato['cidade'] ?>
+                        </td>
+                        <td>
+                            <?php echo $contato['estado'] ?>
+                        </td>
+                        <td>
+                            <?php echo $contato['email'] ?>
+                        </td>
+                        <td>
+                            <?php echo $contato['telefone'] ?>
+                        </td>
+                        <td>
+                            <button><a href="editar.php?id=<?php echo $contato['id']?>">Editar</a></button>
+                            <button><a href="deletar.php?id=<?php echo $contato['id']?>">Excluir</a></button>
+                        </td>
+                    </tr>
 
                 <?php endforeach ?>
 

@@ -40,5 +40,22 @@ class Agenda
         return $contato;
 
     }
-    
+
+    // Update
+    public function editarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone, string $id): void
+    {
+        $editarContato = $this->mysql->prepare('UPDATE `contatos` SET nome = ?, endereco = ?, cidade = ?, estado= ?, email= ?, telefone= ? WHERE id = ?;' );
+        $editarContato->bind_param('sssssss', $nome, $endereco, $cidade, $estado, $email, $telefone, $id);
+        $editarContato->execute();
+
+    }
+
+    //Delete
+    public function deletarContato(string $id): void
+    {
+        $deletaContato = $this->mysql->prepare('DELETE FROM  `contatos` WHERE id = ?;');
+        $deletaContato->bind_param('s', $id);
+        $deletaContato->execute();
+        
+    }
 }
