@@ -30,5 +30,15 @@ class Agenda
         return $contatos;
 
     }
+
+    public function encontrarPorId(string $id): array
+    {
+        $selecionaContato = $this->mysql->prepare('SELECT * FROM `contatos` WHERE id = ?');
+        $selecionaContato->bind_param('s', $id);
+        $selecionaContato->execute();
+        $contato = $selecionaContato->get_result()->fetch_assoc();
+        return $contato;
+
+    }
     
 }
