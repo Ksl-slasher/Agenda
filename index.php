@@ -3,15 +3,33 @@
 require 'config.php';
 require 'src/Agenda.php';
 require 'src/redireciona.php';
-$edicao = false;
+$id = null;
+
+if(isset($_GET['id'])){
+    $id = $_GET['id'];
+}
+else{
+    $id = -1;
+}
+
 
 $listaContatos = new Agenda($mysql);
 $contatos = $listaContatos->exibirTodos();
+$contato = $listaContatos->encontrarPorId($id);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' and $edicao === false ) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id === -1 ) {
 
     $contato = new Agenda($mysql);
     $contato->adicionarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone']);
+
+    redireciona('index.php');
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
+
+    $contato = new Agenda($mysql);
+    $contato->editarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone'], $_POST['id']);
 
     redireciona('index.php');
 
@@ -40,27 +58,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $edicao === false ) {
     <section class="section">
         <header class="formulario-entrada">
             <h1>Agenda</h1>
-            <form action="index.php" method="POST">
+                <?php  if($id === -1 ){ ?>
+                    <form action="index.php" method="POST">
+                        <label for="Nome">Nome</label>
+                        <input name="nome" type="text" placeholder="John Doe" id='nome' required>
 
-                <label for="Nome">Nome</label>
-                <input name="nome" type="text" placeholder="John Doe" id='nome' required>
+                        <label for="Endereço">Endereço</label>
+                        <input name="endereco" type="text" placeholder="Rua Capital, 33" id="endereco" required>
 
-                <label for="Endereço">Endereço</label>
-                <input name="endereco" type="text" placeholder="Rua Capital, 33" id="endereco" required>
+                        <label for="Cidade">Cidade</label>
+                        <input name="cidade" type="text" placeholder="São Bento do Sul" id="cidade" required>
 
-                <label for="Cidade">Cidade</label>
-                <input name="cidade" type="text" placeholder="São Bento do Sul" id="cidade" required>
+                        <label for="Estado">Estado</label>
+                        <input name="estado" type="text" placeholder="Santa Catarina" id="estado" required>
 
-                <label for="Estado">Estado</label>
-                <input name="estado" type="text" placeholder="Santa Catarina" id="estado" required>
+                        <label for="Email">Email</label>
+                        <input name="email" type="email" placeholder="JohnDoe@exemplo.com" id="email" required>
 
-                <label for="Email">Email</label>
-                <input name="email" type="email" placeholder="JohnDoe@exemplo.com" id="email" required>
+                        <label for="Telefone">Telefone</label>
+                        <input name="telefone" type="text" placeholder="(XX)XXXXX-XXXX" id="telefone" required>
 
-                <label for="Telefone">Telefone</label>
-                <input name="telefone" type="text" placeholder="(XX)XXXXX-XXXX" id="telefone" required>
+                        <input id="salvar" type="submit" value="Salvar contato">
+                <?php } if($id != -1 ) { ?>
+                    <form action="index.php?id=<?php echo $contato['id'] ?>" method="POST">
+                        <label for="Nome">Nome</label>
+                        <input name="nome" type="text" placeholder="John Doe" id='nome' value="<?php echo $contato['nome']?>" required>
 
-                <input id="salvar" type="submit" value="Salvar contato">
+                        <label for="Endereço">Endereço</label>
+                        <input name="endereco" type="text" placeholder="Rua Capital, 33" value="<?php echo $contato['endereco']?>" id="endereco" required>
+
+                        <label for="Cidade">Cidade</label>
+                        <input name="cidade" type="text" placeholder="São Bento do Sul" value="<?php echo $contato['cidade']?>" id="cidade" required>
+
+                        <label for="Estado">Estado</label>
+                        <input name="estado" type="text" placeholder="Santa Catarina" value="<?php echo $contato['estado']?>" id="estado" required>
+
+                        <label for="Email">Email</label>
+                        <input name="email" type="email" placeholder="JohnDoe@exemplo.com" value="<?php echo $contato['email']?>" id="email" required>
+
+                        <label for="Telefone">Telefone</label>
+                        <input name="telefone" type="text" placeholder="(XX)XXXXX-XXXX" value="<?php echo $contato['telefone']?>" id="telefone" required>
+
+                        <input type="hidden" name="id" value="<?php echo $contato['id'] ?>" > 
+
+                        <input id="salvar" type="submit" value="Confirmar edição">
+                <?php } ?>
+
 
             </form>
 
@@ -115,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $edicao === false ) {
                             <?php echo $contato['telefone'] ?>
                         </td>
                         <td>
-                            <button><a href="editar.php?id=<?php echo $contato['id']?>">Editar</a></button>
+                            <button><a href="index.php?id=<?php echo $contato['id']?>">Editar</a></button>
                             <button><a href="deletar.php?id=<?php echo $contato['id']?>">Excluir</a></button>
                         </td>
                     </tr>

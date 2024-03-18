@@ -37,7 +37,11 @@ class Agenda
         $selecionaContato->bind_param('s', $id);
         $selecionaContato->execute();
         $contato = $selecionaContato->get_result()->fetch_assoc();
-        return $contato;
+        if($contato === null){
+            return $array = array();
+        }else{
+            return $contato;
+        }
 
     }
 
