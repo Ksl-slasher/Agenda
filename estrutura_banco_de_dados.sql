@@ -1,17 +1,17 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE DATABASE IF NOT EXISTS `agenda` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `agenda`;
+CREATE DATABASE IF NOT EXISTS `db_agenda` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `db_agenda`;
 
-DROP TABLE IF EXISTS `contatos`;
-CREATE TABLE IF NOT EXISTS `contatos`(
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `nome` text NOT NULL,
-    `endereco`text NOT NULL,
-    `cidade` text NOT NULL,
-    `estado` text NOT NULL,
-    `email` text NOT NULL,
-    `telefone`, text NOT NULL,
-    PRIMARY KEY (`id`)
+DROP TABLE IF EXISTS `tb_contatos`;
+CREATE TABLE IF NOT EXISTS `tb_contatos`(
+    `con_id` int(11) NOT NULL AUTO_INCREMENT,
+    `con_nome` text NOT NULL,
+    `con_endereco`text NOT NULL,
+    `con_cidade` text NOT NULL,
+    `con_estado` text NOT NULL,
+    `con_email` text NOT NULL,
+    `con_telefone` text NOT NULL,
+    PRIMARY KEY (`con_id`)
 );

@@ -15,7 +15,7 @@ class Agenda
     // Create
     public function adicionarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone): void
     {
-        $adicionaContato = $this->mysql->prepare('INSERT INTO `contatos` (`nome`, `endereco`, `cidade`, `estado`, `email`, `telefone` ) VALUES (?, ?, ?, ?, ?, ?) ;');
+        $adicionaContato = $this->mysql->prepare('INSERT INTO `tb_contatos` (`con_nome`, `con_endereco`, `con_cidade`, `con_estado`, `con_email`, `con_telefone` ) VALUES (?, ?, ?, ?, ?, ?) ;');
         $adicionaContato->bind_param('ssssss', $nome, $endereco, $cidade, $estado, $email, $telefone);
         $adicionaContato->execute();
 
@@ -24,7 +24,7 @@ class Agenda
     // Read
     public function exibirTodos(): array
     {
-        $resultado = $this->mysql->query('SELECT * FROM `contatos`;');
+        $resultado = $this->mysql->query('SELECT * FROM `tb_contatos`;');
         $contatos = $resultado->fetch_all(MYSQLI_ASSOC);
 
         return $contatos;
@@ -33,7 +33,7 @@ class Agenda
 
     public function encontrarPorId(string $id): array
     {
-        $selecionaContato = $this->mysql->prepare('SELECT * FROM `contatos` WHERE id = ?');
+        $selecionaContato = $this->mysql->prepare('SELECT * FROM `tb_contatos` WHERE con_id = ?');
         $selecionaContato->bind_param('s', $id);
         $selecionaContato->execute();
         $contato = $selecionaContato->get_result()->fetch_assoc();
@@ -48,7 +48,7 @@ class Agenda
     // Update
     public function editarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone, string $id): void
     {
-        $editarContato = $this->mysql->prepare('UPDATE `contatos` SET nome = ?, endereco = ?, cidade = ?, estado= ?, email= ?, telefone= ? WHERE id = ?;' );
+        $editarContato = $this->mysql->prepare('UPDATE `tb_contatos` SET con_nome = ?, con_endereco = ?, con_cidade = ?, con_estado= ?, con_email= ?, con_telefone= ? WHERE con_id = ?;' );
         $editarContato->bind_param('sssssss', $nome, $endereco, $cidade, $estado, $email, $telefone, $id);
         $editarContato->execute();
 
@@ -57,7 +57,7 @@ class Agenda
     //Delete
     public function deletarContato(string $id): void
     {
-        $deletaContato = $this->mysql->prepare('DELETE FROM  `contatos` WHERE id = ?;');
+        $deletaContato = $this->mysql->prepare('DELETE FROM  `tb_contatos` WHERE con_id = ?;');
         $deletaContato->bind_param('s', $id);
         $deletaContato->execute();
         
