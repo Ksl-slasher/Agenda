@@ -14,7 +14,9 @@ class Agenda
 
     // Create
     public function adicionarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone): void
-    {
+    {   
+        $clean = array("-", "(", ")", " ");
+        $telefone = str_replace($clean,"", $telefone);
         $adicionaContato = $this->mysql->prepare('INSERT INTO `tb_contatos` (`con_nome`, `con_endereco`, `con_cidade`, `con_estado`, `con_email`, `con_telefone` ) VALUES (?, ?, ?, ?, ?, ?) ;');
         $adicionaContato->bind_param('ssssss', $nome, $endereco, $cidade, $estado, $email, $telefone);
         $adicionaContato->execute();
@@ -48,6 +50,8 @@ class Agenda
     // Update
     public function editarContato(string $nome, string $endereco, string $cidade, string $estado, string $email, string $telefone, string $id): void
     {
+        $clean = array("-", "(", ")", " ");
+        $telefone = str_replace($clean,"", $telefone);
         $editarContato = $this->mysql->prepare('UPDATE `tb_contatos` SET con_nome = ?, con_endereco = ?, con_cidade = ?, con_estado= ?, con_email= ?, con_telefone= ? WHERE con_id = ?;' );
         $editarContato->bind_param('sssssss', $nome, $endereco, $cidade, $estado, $email, $telefone, $id);
         $editarContato->execute();

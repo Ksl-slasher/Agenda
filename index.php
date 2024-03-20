@@ -3,35 +3,44 @@
 require 'config.php';
 require 'src/Agenda.php';
 require 'src/redireciona.php';
+require 'src/mascaraVisual.php';
 $id = null;
 
-if(isset($_GET['id'])){
+if (isset ($_GET['id'])) {
     $id = $_GET['id'];
-}
-else{
+} else {
     $id = -1;
 }
 
+$mascara = new mascaraVisual();
 
 $listaContatos = new Agenda($mysql);
 $contatos = $listaContatos->exibirTodos();
 $contato = $listaContatos->encontrarPorId($id);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id === -1 ) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id === -1) {
 
-    $contato = new Agenda($mysql);
-    $contato->adicionarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone']);
-
-    redireciona('index.php');
+    if (mb_strlen($_POST['telefone']) === 15) {
+        $contato = new Agenda($mysql);
+        $contato->adicionarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone']);
+        $trigger = false;
+        redireciona('index.php');
+    } else{
+        $trigger = true;
+    }
 
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1) {
+    if (mb_strlen($_POST['telefone']) === 15) {
+        $contato = new Agenda($mysql);
+        $contato->editarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone'], $_POST['id']);
+        $trigger = false;
+        redireciona('index.php');
+    } else {
+        $trigger = true;
+    }
 
-    $contato = new Agenda($mysql);
-    $contato->editarContato($_POST['nome'], $_POST['endereco'], $_POST['cidade'], $_POST['estado'], $_POST['email'], $_POST['telefone'], $_POST['id']);
-
-    redireciona('index.php');
 
 }
 
@@ -60,30 +69,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
     <section class="section">
         <header class="formulario-entrada">
             <h1>Agenda</h1>
-                
-                    <form action="<?php if($id != -1){echo "index.php?id=". $contato['con_id'];} else{echo "index.php";}?>" method="POST">
-                        <label for="Nome">Nome</label>
-                        <input name="nome" type="text" placeholder="John Doe" id='nome' value="<?php if($id != -1){echo $contato['con_nome'];}?>" required>
 
-                        <label for="Endereço">Endereço</label>
-                        <input name="endereco" type="text" placeholder="Rua Capital, 33" value="<?php if($id != -1){echo $contato['con_endereco'];}?>" id="endereco" required>
+            <form action="<?php if ($id != -1) {
+                echo "index.php?id=" . $contato['con_id'];
+            } else {
+                echo "index.php";
+            } ?>" method="POST">
+                <label for="Nome">Nome</label>
+                <input name="nome" type="text" placeholder="John Doe" id='nome' value="<?php if ($id != -1) {
+                    echo $contato['con_nome'];
+                } ?>" required>
 
-                        <label for="Cidade">Cidade</label>
-                        <input name="cidade" type="text" placeholder="São Bento do Sul" value="<?php if($id != -1){echo $contato['con_cidade'];}?>" id="cidade" required>
+                <label for="Endereço">Endereço</label>
+                <input name="endereco" type="text" placeholder="Rua Capital, 33" value="<?php if ($id != -1) {
+                    echo $contato['con_endereco'];
+                } ?>" id="endereco" required>
 
-                        <label for="Estado">Estado</label>
-                        <input name="estado" type="text" placeholder="Santa Catarina" value="<?php if($id != -1){echo $contato['con_estado'];}?>" id="estado" required>
+                <label for="Cidade">Cidade</label>
+                <input name="cidade" type="text" placeholder="São Bento do Sul" value="<?php if ($id != -1) {
+                    echo $contato['con_cidade'];
+                } ?>" id="cidade" required>
 
-                        <label for="Email">Email</label>
-                        <input name="email" type="email" placeholder="JohnDoe@exemplo.com" value="<?php if($id != -1){echo $contato['con_email'];}?>" id="email" required>
+                <label for="Estado">Estado</label>
+                <input name="estado" type="text" placeholder="Santa Catarina" value="<?php if ($id != -1) {
+                    echo $contato['con_estado'];
+                } ?>" id="estado" required>
 
-                        <label for="Telefone">Telefone</label>
-                        <input name="telefone" type="tel" placeholder="(XX)XXXXX-XXXX" onkeyup="handlePhone(event)" value="<?php if($id != -1){echo $contato['con_telefone'];}?>" id="telefone" required>
+                <label for="Email">Email</label>
+                <input name="email" type="email" placeholder="JohnDoe@exemplo.com" value="<?php if ($id != -1) {
+                    echo $contato['con_email'];
+                } ?>" id="email" required>
 
-                        <input type="hidden" name="id" value="<?php if($id != -1){echo $contato['con_id'];} ?>" > 
+                <label for="Telefone">Telefone</label>
+                <input name="telefone" type="tel" minlength="15" placeholder="(XX)XXXXX-XXXX"
+                    onkeyup="handlePhone(event)" value="<?php if ($id != -1) {
+                        echo $mascara->mask('(%s%s) %s%s%s%s%s-%s%s%s%s', $contato['con_telefone']);
+                    } ?>" id="telefone" required>
 
-                        <input id="salvar" type="submit" value="Salvar">
-            
+                <script><?php if ($trigger) {
+                    echo ('alert("O campo telefone deve seguir o padrão (xx) XXXXX-XXXX!")');
+                } ?></script>
+                <input type="hidden" name="id" value="<?php if ($id != -1) {
+                    echo $contato['con_id'];
+                } ?>">
+
+                <input id="salvar" type="submit" value="Salvar">
+
 
 
             </form>
@@ -118,9 +149,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
                     </th>
 
                 </tr>
-                <?php $index = 0; foreach ($contatos as $contato): ?>
-                    
-                    <tr <?php if($index%2==0){ echo 'class="cinza"';} else { echo 'class= "branco"'; } $index++; ?> >
+                <?php $index = 0;
+                foreach ($contatos as $contato): ?>
+
+                    <tr <?php if ($index % 2 == 0) {
+                        echo 'class="cinza"';
+                    } else {
+                        echo 'class= "branco"';
+                    }
+                    $index++; ?>>
                         <td>
                             <?php echo $contato['con_nome'] ?>
                         </td>
@@ -137,11 +174,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $id != -1 ) {
                             <?php echo $contato['con_email'] ?>
                         </td>
                         <td>
-                            <?php echo $contato['con_telefone'] ?>
+                            <?php echo $mascara->mask('(%s%s) %s%s%s%s%s-%s%s%s%s', $contato['con_telefone']); ?>
                         </td>
                         <td>
-                            <button><a href="index.php?id=<?php echo $contato['con_id']?>">Editar</a></button>
-                            <button onclick="retornarAoLocal()" ><a href="deletar.php?id=<?php echo $contato['con_id']?>" onclick="return confirm('Tem certeza que deseja excluir o registro? ');" >Excluir</a></button>
+                            <button><a href="index.php?id=<?php echo $contato['con_id'] ?>">Editar</a></button>
+                            <button onclick="retornarAoLocal()"><a href="deletar.php?id=<?php echo $contato['con_id'] ?>"
+                                    onclick="return confirm('Tem certeza que deseja excluir o registro? ');">Excluir</a></button>
                         </td>
                     </tr>
 
